@@ -1,0 +1,62 @@
+DROP  VIEW LAB5_Credit;
+DROP  VIEW LAB5_RegFee;
+DROP  VIEW LAB5_GPA;
+DROP  VIEW LAB5_GPA_Outer;
+DROP  VIEW LAB5_Teacher_Outer;
+
+1 select * from LAB5_Credit
+
+CREATE VIEW LAB5_Credit 
+AS
+SELECT Student.StdID,StdFName,stdLname,SUM(Credit) TotalCredit
+FROM   Register,Student,Subject
+WHERE  Student.StdID = Register.StdID
+AND    Register.SubjCode = Subject.SubjCode
+GROUP BY Student.StdID,StdFName,stdLname
+ORDER BY Student.StdID;
+
+2 select * from LAB5_RegFee
+
+CREATE VIEW LAB5_RegFee
+AS
+SELECT Student.StdID,StdFName,stdLname,Year,Semester,
+	   SUM(Credit) TotalCredit,SUM(Credit*1000) RegFee
+FROM   Register,Student,Subject
+WHERE  Student.StdID = Register.StdID
+AND    Register.SubjCode = Subject.SubjCode
+GROUP BY Year,Semester,Student.StdID,StdFName,stdLname
+ORDER BY Student.StdID;
+
+3 select * from LAB5_GPA
+CREATE VIEW LAB5_GPA
+AS
+SELECT Student.StdID,StdFName,stdLname,SUM(Grade*Credit)/SUM(Credit) GPA
+FROM   Register,Student,Subject
+WHERE  Student.StdID = Register.StdID
+AND    Register.SubjCode = Subject.SubjCode
+GROUP BY Student.StdID,StdFName,stdLname
+ORDER BY Student.StdID;
+
+4 -- INSERT --
+INSERT INTO Student VALUES ('563020197-5','กฤษดา','โสมายัง','123 จ.ขอนแก่น','F01','D03','T01');
+INSERT INTO Student VALUES ('563020200-2','ขวัญข้าว','เสียงเลิศ','11 จ.ขอนแก่น','F01','D03','');
+INSERT INTO Student VALUES ('563020205-2','ชนนิกา','ปัญจันทร์สิงห์','15 จ.ขอนแก่น','F01','D03','');
+INSERT INTO Student VALUES ('563020206-0','ชนัญชิดา','ปัญจันทร์สิงห์','16 จ.ขอนแก่น','F01','D03','');
+
+5 select * from LAB5_GPA_Outer
+CREATE VIEW LAB5_GPA_Outer
+AS
+SELECT Student.StdID,StdFName,stdLname,SUM(Grade*Credit)/SUM(Credit) GPA
+FROM   Register,Student,Subject
+WHERE  Student.StdID = Register.StdID (+)
+AND    Register.SubjCode = Subject.SubjCode (+)
+GROUP BY Student.StdID,StdFName,stdLname
+ORDER BY GPA;
+
+6 select * from LAB5_Teacher_Outer
+CREATE VIEW LAB5_Teacher_Outer
+AS
+SELECT Student.StdID,StdFName,stdLname,Student.TCode,TFName,TLName
+FROM   Student,Teacher
+WHERE  Student.TCode = Teacher.TCode (+)
+ORDER BY Student.TCode;

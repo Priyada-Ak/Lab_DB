@@ -1,0 +1,35 @@
+
+CREATE VIEW LAB4_Student
+AS
+SELECT StdID,StdFName,stdLname,StdAddress
+FROM Student
+ORDER BY StdID;
+
+CREATE VIEW LAB4_Subject
+AS
+SELECT SubjCode,Name_Tha,Credit
+FROM Subject
+ORDER BY Name_Tha;
+
+CREATE VIEW LAB4_Fact
+AS
+SELECT StdID,StdFName,stdLname,FName_Tha,FName_Eng
+FROM Student,Fact
+WHERE Student.FCode=Fact.FCode
+ORDER BY Student.FCode;
+
+CREATE VIEW LAB4_Adviser
+AS
+SELECT StdID,StdFName,stdLname,TFName,TLName
+FROM Student,Teacher
+WHERE Student.TCode=Teacher.TCode
+ORDER BY TFName;
+
+CREATE VIEW LAB4_REG_322212
+AS
+SELECT Subject.SubjCode,Name_Tha,Student.StdID,StdFName,stdLname,Register.Grade
+FROM Student,Subject,Register
+WHERE Student.StdID=Register.StdID
+  AND Subject.SubjCode=Register.SubjCode
+  AND Subject.SubjCode='322212'
+ORDER BY StdFName;

@@ -1,0 +1,85 @@
+1 
+CREATE TABLE Book(
+    BookID		CHAR(3),
+    BookName	VARCHAR2(60),
+    BookPrice	NUMBER(6,2),
+	BookAmount  NUMBER(3),
+    CONSTRAINTS book_pk PRIMARY KEY(BookID)
+);
+
+2 
+CREATE TABLE Borrow(
+    BorrowID	NUMBER(4),
+    STDID		CHAR(11),
+    BookID		CHAR(3),
+	BorrowDate  DATE,
+	ReturnDate  DATE,
+    CONSTRAINTS borrow_pk PRIMARY KEY(BorrowID),
+	CONSTRAINTS borrow_fk_std FOREIGN KEY(STDID)
+        REFERENCES Student(StdID),
+	CONSTRAINTS borrow_fk_book FOREIGN KEY(BookID)
+        REFERENCES Book(BookID)
+);
+
+3
+INSERT INTO Book VALUES ('B01','คู่มือเรียนการวิเคราะห์ระบบ', '250','10');
+INSERT INTO Book VALUES ('B02','คู่มือใช้งาน PowerPoint', '200','5');
+INSERT INTO Book VALUES ('B03','คู่มือใช้งาน Mac OS X', '150','6');
+INSERT INTO Book VALUES ('B04','Basic iOS App Development', '233','5');
+INSERT INTO Book VALUES ('B05','Professional ASP.NET Programming', '200','4');
+INSERT INTO Book VALUES ('B06','เรียน Database อย่างไรให้ไร้ F', '99','5');
+
+4
+คนที่ 1  ยืม B01 – B05 633020565-9
+INSERT INTO Borrow VALUES ('1','633020565-9','B01',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('2','633020565-9','B02',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('3','633020565-9','B03',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('4','633020565-9','B04',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('5','633020565-9','B05',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+คนที่ 2	ยืม B02 – B05 633020572-2
+INSERT INTO Borrow VALUES ('6','633020572-2','B02',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('7','633020572-2','B03',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('8','633020572-2','B04',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('9','633020572-2','B05',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+คนที่ 3	ยืม B03 – B05 633021010-9
+INSERT INTO Borrow VALUES ('10','633021010-9','B03',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('11','633021010-9','B04',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('12','633021010-9','B05',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+คนที่ 4	ยืม B04 – B05 633020568-3
+INSERT INTO Borrow VALUES ('13','633020568-3','B04',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+INSERT INTO Borrow VALUES ('14','633020568-3','B05',TO_DATE('22/2/2022', 'DD/MM/YYYY'),TO_DATE('25/2/2022', 'DD/MM/YYYY'));
+
+5
+CREATE VIEW LAB6_BookPrice
+AS
+SELECT BookID,BookName,BookAmount,BookPrice,
+	   BookAmount*BookPrice TotalPrice
+FROM   Book;
+
+6
+CREATE VIEW LAB6_BorrowDetail
+AS
+SELECT Student.StdID,StdFName,stdLname,BookName,BorrowDate,ReturnDate
+FROM   Book,Student,Borrow
+WHERE  Student.StdID = Borrow.STDID
+  AND  Borrow.BookID = Book.BookID
+GROUP BY Student.StdID,StdFName,stdLname,BookName,BorrowDate,ReturnDate
+ORDER BY Student.StdID,BorrowDate;
+
+7  
+CREATE VIEW LAB6_StudentBorrow
+AS
+SELECT Student.StdID,StdFName,stdLname,COUNT(*) Amount
+FROM   Student,Borrow
+WHERE  Borrow.STDID = Student.StdID
+GROUP BY Student.StdID,StdFName,stdLname
+ORDER BY StdFName,stdLname;
+
+8	
+CREATE VIEW LAB6_BOOKBORROW
+AS
+SELECT Book.BookID,BookName,COUNT(Borrow.BookID) Amount
+FROM   Borrow,Book
+WHERE  Book.BookID = Borrow.BookID (+)
+GROUP BY Book.BookID,BookName
+ORDER BY Book.BookID;
